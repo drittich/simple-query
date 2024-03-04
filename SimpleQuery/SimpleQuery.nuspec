@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>drittich.SimpleQuery</id>
+    <version>1.0.1</version>
+    <title>drittich.SimpleQuery</title>
+    <authors>D'Arcy Rittich</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <!-- <icon>icon.png</icon> -->
+    <projectUrl>https://github.com/drittich/simple-query</projectUrl>
+    <description>A simple generated-code model for querying a SQLite database</description>
+    <releaseNotes>Initial release of code gen executable.</releaseNotes>
+    <copyright>2024 D'Arcy Rittich</copyright>
+    <tags>sqlite model</tags>
+	<readme>README.md</readme>
+	<repository type="git" url="https://github.com/drittich/simple-query"/>
+  </metadata>
+  <files>
+    <file src="..\SimpleQuery.CodeGen\bin\Release\net5.0\publish\win-x64\*.*" target="tools" />
+    <file src="README.md" target="" />
+  </files>
+</package>
