@@ -47,7 +47,7 @@ namespace drittich.SimpleQuery.CodeGen
 			var code = new StringBuilder();
 			code.AppendLine("using drittich.SimpleQuery;");
 			code.AppendLine();
-			code.AppendLine($"public class {tableType.Name} : DbContextEntity");
+			code.AppendLine($"public class {tableType.Name} : SimpleQueryEntity");
 			code.AppendLine("{");
 
 			foreach (var property in tableType.Properties)

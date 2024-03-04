@@ -3,7 +3,7 @@ A library for generating a simple model layer for a SQLite database
 
 ## Usage
 
-To generate the model code, you will run the `SimpleQuery.CodeGen.exe` executable. You can find this in the `C:\Users\[YOUR_USERNAME]]\.nuget\packages\drittich.simplequery\1.0.1\tools` folder. Before doing this, create an `appsettings.json` file in the same folder as the executable. This file should contain the following settings:
+To generate the model code, you will run the `SimpleQuery.CodeGen.exe` executable. You can find this in the `C:\Users\[YOUR_USERNAME]]\.nuget\packages\drittich.simplequery\x.x.x\tools` folder. Before doing this, create an `appsettings.json` file in the same folder as the executable. This file should contain the following settings:
 
 ```json
 {

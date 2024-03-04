@@ -15,7 +15,7 @@ namespace drittich.SimpleQuery
 		public int QueryCount = 0;
 		public int QueryTotalMs = 0;
 
-		public SimpleQueryService(string connectionString, string modelFolder, (string table, string column) ignoreFks)
+		public SimpleQueryService(string connectionString)
 		{
 			_connectionString = connectionString;
 		}
