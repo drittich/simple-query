@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,7 +10,7 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/drittich/simple-query</projectUrl>
     <description>A simple generated-code model for querying a SQLite database</description>
-    <releaseNotes>Initial release of code gen executable.</releaseNotes>
+    <releaseNotes>Initial release.</releaseNotes>
     <copyright>2024 D'Arcy Rittich</copyright>
     <tags>sqlite model</tags>
 	<readme>README.md</readme>
@@ -25,6 +25,6 @@
   <files>
 	 <file src="bin\Release\netstandard2.1\SimpleQuery.dll" target="lib\netstandard2.1" />
      <file src="..\SimpleQuery.CodeGen\bin\Release\net8.0\publish\win-x64\*.*" target="tools" />
-    <file src="README.md" target="" />
+    <file src="..\README.md" target="" />
   </files>
 </package>
