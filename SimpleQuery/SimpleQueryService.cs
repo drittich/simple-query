@@ -34,7 +34,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously retrieves the first entity of the specified type with the given ID.
+		/// Retrieves the first entity of the specified type with the given ID.
 		/// </summary>
 		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
 		/// <param name="id">The ID of the entity to retrieve.</param>
@@ -53,7 +53,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously retrieves the first entity of the specified type with the given ID, or null if no such entity exists.
+		/// Retrieves the first entity of the specified type with the given ID, or null if no such entity exists.
 		/// </summary>
 		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
 		/// <param name="id">The ID of the entity to retrieve.</param>
@@ -66,7 +66,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously retrieves an entity of the specified type with the given ID.
+		/// Retrieves an entity of the specified type with the given ID.
 		/// </summary>
 		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
 		/// <param name="id">The ID of the entity to retrieve.</param>
@@ -80,7 +80,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously retrieves all entities of the specified type.
+		/// Retrieves all entities of the specified type.
 		/// </summary>
 		/// <typeparam name="T">The type of the entities to retrieve.</typeparam>
 		/// <param name="fetchReferencesType">The fetch mode for related entities.</param>
@@ -92,7 +92,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously retrieves all entities of the specified type with the given IDs.
+		/// Retrieves all entities of the specified type with the given IDs.
 		/// </summary>
 		/// <typeparam name="T">The type of the entities to retrieve.</typeparam>
 		/// <param name="ids">A collection of IDs for the entities to retrieve.</param>
@@ -123,7 +123,7 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
-		/// Asynchronously queries the database for entities of the specified type where the specified column matches the given value.
+		/// Queries the database for entities of the specified type where the specified column matches the given value.
 		/// </summary>
 		/// <typeparam name="T">The type of the entities to retrieve.</typeparam>
 		/// <param name="columnName">The name of the column to filter by.</param>
