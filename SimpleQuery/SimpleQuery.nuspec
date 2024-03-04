@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -24,6 +24,7 @@
   </metadata>
   <files>
 	 <file src="bin\Release\netstandard2.1\SimpleQuery.dll" target="lib\netstandard2.1" />
+	 <file src="bin\Release\netstandard2.1\SimpleQuery.xml" target="lib\netstandard2.1" />
      <file src="..\SimpleQuery.CodeGen\bin\Release\net8.0\publish\win-x64\*.*" target="tools" />
     <file src="..\README.md" target="" />
   </files>
