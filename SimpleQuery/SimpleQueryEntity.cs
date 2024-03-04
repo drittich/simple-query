@@ -1,21 +1,23 @@
-﻿namespace Linq3Sql
+﻿using System.Collections.Generic;
+
+namespace drittich.SimpleQuery
 {
-	public class DbContextEntity
+	public class SimpleQueryEntity
 	{
-		internal DbContextService? _dbContext = null;
+		public SimpleQueryService? _dbContext = null;
 		internal ReferenceFetchMode _fetchReferencesType = ReferenceFetchMode.None;
 		internal ICollection<string>? _entitiesToFetch = null;
 
-		internal ReferenceFetchMode GetChildrenReferenceFetchMode()
+		public ReferenceFetchMode GetChildrenReferenceFetchMode()
 		{
 			return _fetchReferencesType == ReferenceFetchMode.SingleLevel ? ReferenceFetchMode.None : _fetchReferencesType;
 		}
 
-		internal bool GetFetchReferences(string entityName)
+		public bool GetFetchReferences(string entityName)
 		{
 			return _fetchReferencesType == ReferenceFetchMode.SingleLevel
 				|| _fetchReferencesType == ReferenceFetchMode.Recursive
-				|| (_fetchReferencesType == ReferenceFetchMode.ByName && _entitiesToFetch is not null && _entitiesToFetch.Contains(entityName));
+				|| (_fetchReferencesType == ReferenceFetchMode.ByName && _entitiesToFetch != null && _entitiesToFetch.Contains(entityName));
 		}
 	}
 }

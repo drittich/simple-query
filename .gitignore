@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /SimpleQuery/GeneratedModel
 /SimpleQuery.Console/GeneratedModel
+/SimpleQuery.CodeGen/appsettings.json

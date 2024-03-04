@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleQuery.Console", "SimpleQuery.Console\SimpleQuery.Console.csproj", "{6C39599D-CEAE-4C32-8A4E-82C9A6FFB91B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleQuery.CodeGen", "SimpleQuery.CodeGen\SimpleQuery.CodeGen.csproj", "{6C39599D-CEAE-4C32-8A4E-82C9A6FFB91B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleQuery", "SimpleQuery\SimpleQuery.csproj", "{4FBA9C3C-5556-4A3A-B55E-9B3EF84D7416}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{6C39599D-CEAE-4C32-8A4E-82C9A6FFB91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C39599D-CEAE-4C32-8A4E-82C9A6FFB91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C39599D-CEAE-4C32-8A4E-82C9A6FFB91B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FBA9C3C-5556-4A3A-B55E-9B3EF84D7416}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FBA9C3C-5556-4A3A-B55E-9B3EF84D7416}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FBA9C3C-5556-4A3A-B55E-9B3EF84D7416}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FBA9C3C-5556-4A3A-B55E-9B3EF84D7416}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

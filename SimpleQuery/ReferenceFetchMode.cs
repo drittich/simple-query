@@ -1,4 +1,4 @@
-﻿namespace Linq3Sql
+﻿namespace drittich.SimpleQuery
 {
 	public enum ReferenceFetchMode
 	{
@@ -7,5 +7,4 @@
 		Recursive, // Indicates all references, recursively, will be populated.
 		ByName // Indicates only specifically named references will be populated.
 	}
-
 }
