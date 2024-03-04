@@ -17,7 +17,8 @@
 	<repository type="git" url="https://github.com/drittich/simple-query"/>
   </metadata>
   <files>
-    <file src="..\SimpleQuery.CodeGen\bin\Release\net5.0\publish\win-x64\*.*" target="tools" />
+	 <file src="bin\Release\netstandard2.1\SimpleQuery.dll" target="lib\netstandard2.1" />
+     <file src="..\SimpleQuery.CodeGen\bin\Release\net5.0\publish\win-x64\*.*" target="tools" />
     <file src="README.md" target="" />
   </files>
 </package>
