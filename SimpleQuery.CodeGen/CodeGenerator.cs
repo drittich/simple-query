@@ -17,6 +17,12 @@ namespace drittich.SimpleQuery.CodeGen
 		private readonly string _modelFolder;
 		private readonly string[] _excludeTables;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CodeGenerator"/> class.
+		/// </summary>
+		/// <param name="connectionString">The connection string to the database.</param>
+		/// <param name="modelFolder">The folder where the generated models will be saved.</param>
+		/// <param name="excludeTables">An array of table names to be excluded from the code generation.</param>
 		public CodeGenerator(string connectionString, string modelFolder, string[] excludeTables)
 		{
 			_connectionString = connectionString;
@@ -24,6 +30,16 @@ namespace drittich.SimpleQuery.CodeGen
 			_excludeTables = excludeTables;
 		}
 
+		/// <summary>
+		/// Generates code for each table in the database, excluding the tables specified in the excludeTables parameter of the constructor.
+		/// </summary>
+		/// <remarks>
+		/// This method performs the following steps for each table:
+		/// 1. Retrieves the table type information from the database.
+		/// 2. Generates the code for the table.
+		/// 3. Writes the generated code to a file in the model folder.
+		/// </remarks>
+		/// <returns>A Task representing the asynchronous operation.</returns>
 		public async Task GenerateCodeAsync()
 		{
 			Directory.CreateDirectory(_modelFolder);
@@ -42,6 +58,12 @@ namespace drittich.SimpleQuery.CodeGen
 			}
 		}
 
+		/// <summary>
+		/// Generates the C# code for a given table type.
+		/// </summary>
+		/// <param name="tableNames">A list of all table names in the database.</param>
+		/// <param name="tableType">The type information of the table for which the code is to be generated.</param>
+		/// <returns>A string containing the generated C# code.</returns>
 		private string GenerateCode(List<string> tableNames, TableType tableType)
 		{
 			var code = new StringBuilder();
@@ -63,34 +85,24 @@ namespace drittich.SimpleQuery.CodeGen
 				code.AppendLine($"\tpublic {typeName} {property.Name} {{ get; set; }}{defaultValue}");
 			}
 
-			// add foreign key properties
-			var fkCode = new StringBuilder();
-			var hasForeignKey = false;
-			foreach (var property in tableType.Properties.Where(p => !p.IsPrimaryKey))
-			{
-				// Assume that if it ends with Id, it's a foreign key
-				if (property.Name.EndsWith("Id"))
-				{
-					var foreignKeyTableName = property.Name.Substring(0, property.Name.Length - 2);
+			var fkProperties = tableType.Properties
+				.Where(p => !p.IsPrimaryKey && p.Name.EndsWith("Id") && p.Name.Length > 2);
 
-					if (!tableNames.Contains(foreignKeyTableName)) continue;
+			// add foreign key properties
+			if (fkProperties.Any())
+			{
+				var fkCode = new StringBuilder();
+				foreach (var property in fkProperties)
+				{
+					var fkTableName = property.Name.Substring(0, property.Name.Length - 2);
+
+					if (!tableNames.Contains(fkTableName)) continue;
 
 					fkCode.AppendLine($@"
-	private {foreignKeyTableName}? _{foreignKeyTableName} = null;
-	public {foreignKeyTableName}? {foreignKeyTableName} {{ 
-		get {{
-			if (GetFetchReferences(""{foreignKeyTableName}"") && _{foreignKeyTableName} is null{(property.IsNullable ? $" && {property.Name} is not null" : string.Empty)}) {{
-				_{foreignKeyTableName} = _dbContext!.GetFirst{(property.IsNullable ? "OrDefault" : string.Empty)}Async<{foreignKeyTableName}>({property.Name}{(property.IsNullable ? ".Value" : string.Empty)}, GetChildrenReferenceFetchMode()).Result;
-			}}
-			return _{foreignKeyTableName};
-		}}  
-	}}");
-					hasForeignKey = true;
+    private {fkTableName}? _{fkTableName};
+    public {fkTableName}? {fkTableName} => _{fkTableName} ??= _FetchById<{fkTableName}>({property.Name});");
 				}
-			}
 
-			if (hasForeignKey)
-			{
 				code.AppendLine();
 				code.AppendLine($"\t// Foreign key references");
 				code.Append(fkCode);

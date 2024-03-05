@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.0.7</version>
+    <version>1.0.13</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,7 +10,7 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/drittich/simple-query</projectUrl>
     <description>A simple generated-code model for querying a SQLite database</description>
-    <releaseNotes>Initial release.</releaseNotes>
+    <releaseNotes>Added method to support ad hoc WHERE clauses</releaseNotes>
     <copyright>2024 D'Arcy Rittich</copyright>
     <tags>sqlite model</tags>
 	<readme>README.md</readme>
