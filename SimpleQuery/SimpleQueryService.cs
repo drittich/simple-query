@@ -163,6 +163,63 @@ namespace drittich.SimpleQuery
 		}
 
 		/// <summary>
+		/// Retrieves the first entity of the specified type based on the provided column values.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
+		/// <param name="columnValues">The column values to filter the entities.</param>
+		/// <param name="fetchReferencesType">The fetch mode for related entities.</param>
+		/// <param name="entitiesToFetch">A collection of entity names to fetch.</param>
+		/// <returns>The first entity of the specified type that matches the column values.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if no entity matches the column values.</exception>
+		public async Task<T> GetFirstByColumnValuesAsync<T>(Dictionary<string, object> columnValues, ReferenceFetchMode fetchReferencesType = ReferenceFetchMode.None, ICollection<string>? entitiesToFetch = null) where T : SimpleQueryEntity
+		{
+			return (await GetAllByColumnValuesAsync<T>(columnValues, fetchReferencesType, entitiesToFetch)).First();
+		}
+
+		/// <summary>
+		/// Retrieves the first entity of the specified type based on the provided column values, or null if no such entity exists.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
+		/// <param name="columnValues">The column values to filter the entities.</param>
+		/// <param name="fetchReferencesType">The fetch mode for related entities.</param>
+		/// <param name="entitiesToFetch">A collection of entity names to fetch.</param>
+		/// <returns>The first entity of the specified type that matches the column values, or null if no such entity exists.</returns>
+		public async Task<T> GetFirstOrDefaultByColumnValuesAsync<T>(Dictionary<string, object> columnValues, ReferenceFetchMode fetchReferencesType = ReferenceFetchMode.None, ICollection<string>? entitiesToFetch = null) where T : SimpleQueryEntity
+		{
+			return (await GetAllByColumnValuesAsync<T>(columnValues, fetchReferencesType, entitiesToFetch)).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Retrieves a list of entities of the specified type based on the provided column values.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities to retrieve.</typeparam>
+		/// <param name="columnValues">The column values to filter the entities.</param>
+		/// <param name="fetchReferencesType">The fetch mode for related entities.</param>
+		/// <param name="entitiesToFetch">A collection of entity names to fetch.</param>
+		/// <returns>A list of entities of the specified type that match the column values.</returns>
+		public async Task<List<T>> GetAllByColumnValuesAsync<T>(Dictionary<string, object> columnValues, ReferenceFetchMode fetchReferencesType = ReferenceFetchMode.None, ICollection<string>? entitiesToFetch = null) where T : SimpleQueryEntity
+		{
+			var sql = $"SELECT * FROM {typeof(T).Name} WHERE ";
+			sql += string.Join(" AND ", columnValues.Select(kvp => $"{kvp.Key} = @{kvp.Key}"));
+
+			var sw = System.Diagnostics.Stopwatch.StartNew();
+			using var cn = new SqliteConnection(_connectionString);
+			await cn.OpenAsync();
+			var results = (await cn.QueryAsync<T>(sql, columnValues)).ToList();
+			QueryTotalMs += (int)sw.ElapsedMilliseconds;
+			QueryCount++;
+
+			foreach (var item in results)
+			{
+				item._dbContext = this;
+				item._fetchReferencesType = fetchReferencesType;
+				item._entitiesToFetch = entitiesToFetch;
+			}
+
+			return results;
+		}
+
+		/// <summary>
 		/// Retrieves the first entity of the specified type based on the provided WHERE clause.
 		/// </summary>
 		/// <typeparam name="T">The type of the entity to retrieve.</typeparam>
