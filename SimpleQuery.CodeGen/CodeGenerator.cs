@@ -47,6 +47,7 @@ namespace drittich.SimpleQuery.CodeGen
 			var code = new StringBuilder();
 			code.AppendLine("using drittich.SimpleQuery;");
 			code.AppendLine();
+			code.AppendLine("namespace SimpleQuery {");
 			code.AppendLine($"public class {tableType.Name} : SimpleQueryEntity");
 			code.AppendLine("{");
 
@@ -95,6 +96,7 @@ namespace drittich.SimpleQuery.CodeGen
 				code.Append(fkCode);
 			}
 
+			code.AppendLine("}");
 			code.AppendLine("}");
 
 			return code.ToString();
