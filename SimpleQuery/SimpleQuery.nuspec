@@ -2,15 +2,15 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.1.8</version>
+    <version>1.2.0</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/drittich/simple-query</projectUrl>
-    <description>Add GetConnection methods</description>
-    <releaseNotes>Rename methods</releaseNotes>
+    <description>A code-generated model for SQLite</description>
+    <releaseNotes>Use FKs to generate lazy getters</releaseNotes>
     <copyright>2024 D'Arcy Rittich</copyright>
     <tags>sqlite model</tags>
 	<readme>README.md</readme>
