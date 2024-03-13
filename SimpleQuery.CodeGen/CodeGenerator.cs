@@ -102,25 +102,23 @@ namespace drittich.SimpleQuery.CodeGen
 				code.AppendLine($"\tpublic {typeName} {property.Name} {{ get; set; }}{defaultValue}");
 			}
 
-			var fkProperties = tableType.Properties
-				.Where(p => !p.IsPrimaryKey && p.Name.EndsWith("Id") && p.Name.Length > 2);
-
-			// add foreign key properties
-			if (fkProperties.Any())
+			// add foreign key properties using foreign key constraints
+			var foreignKeys = GetForeignKeys(tableType.Name, new SqliteConnection(_connectionString)).Result;
+			if (foreignKeys.Any())
 			{
 				var fkCode = new StringBuilder();
-				foreach (var property in fkProperties)
+				foreach (var key in foreignKeys)
 				{
-					var fkTableName = property.Name.Substring(0, property.Name.Length - 2);
-
-					if (!tableNames.Contains(fkTableName)) continue;
+					var newPropertyName = key.from.EndsWith("Id", StringComparison.InvariantCultureIgnoreCase) && key.from.Length > 2
+						? key.from.Substring(0, key.from.Length - 2)
+						: $"{key.from}Object";
 
 					fkCode.AppendLine($@"
-    private {fkTableName}? _{fkTableName};
-	public {fkTableName}? {fkTableName} 
+    private {key.table}? _{newPropertyName};
+	public {key.table}? {newPropertyName} 
 	{{ 
-		get => _{fkTableName} ??= _FetchById<{fkTableName}>({property.Name});
-		set => _{fkTableName} = value;
+		get => _{newPropertyName} ??= _FetchById<{key.table}>({key.from});
+		set => _{newPropertyName} = value;
 	}}");
 				}
 
@@ -128,6 +126,7 @@ namespace drittich.SimpleQuery.CodeGen
 				code.AppendLine($"\t// Foreign key references");
 				code.Append(fkCode);
 			}
+
 
 			code.AppendLine("}");
 			if (!_oneLineNamespaceDeclaration)
@@ -207,6 +206,12 @@ namespace drittich.SimpleQuery.CodeGen
 				"datetime" => "DateTime",
 				_ => throw new NotSupportedException($"The column type '{columnType}' is not supported"),
 			};
+		}
+
+		private async Task<List<ForeignKey>> GetForeignKeys(string tableName, SqliteConnection connection)
+		{
+			var sql = @$"PRAGMA foreign_key_list('{tableName}');";
+			return (await connection.QueryAsync<ForeignKey>(sql, new { tableName })).ToList();
 		}
 	}
 }
