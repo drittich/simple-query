@@ -16,6 +16,8 @@ namespace drittich.SimpleQuery.CodeGen
 		private readonly string _connectionString;
 		private readonly string _modelFolder;
 		private readonly string[] _excludeTables;
+		private readonly string _modelNamespace;
+		private readonly bool _oneLineNamespaceDeclaration;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="CodeGenerator"/> class.
@@ -23,11 +25,13 @@ namespace drittich.SimpleQuery.CodeGen
 		/// <param name="connectionString">The connection string to the database.</param>
 		/// <param name="modelFolder">The folder where the generated models will be saved.</param>
 		/// <param name="excludeTables">An array of table names to be excluded from the code generation.</param>
-		public CodeGenerator(string connectionString, string modelFolder, string[] excludeTables)
+		public CodeGenerator(string connectionString, string modelFolder, string[] excludeTables, string modelNamespace, bool oneLineNamespaceDeclaration)
 		{
 			_connectionString = connectionString;
 			_modelFolder = modelFolder;
 			_excludeTables = excludeTables;
+			_modelNamespace = modelNamespace;
+			_oneLineNamespaceDeclaration = oneLineNamespaceDeclaration;
 		}
 
 		/// <summary>
@@ -66,17 +70,30 @@ namespace drittich.SimpleQuery.CodeGen
 		/// <returns>A string containing the generated C# code.</returns>
 		private string GenerateCode(List<string> tableNames, TableType tableType)
 		{
+			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+			var version = assembly.GetName().Version!;
+			var generatedTime = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+
 			var code = new StringBuilder();
+			code.AppendLine($"// This code was generated with SimpleQuery v{version.Major}.{version.Minor}.{version.Build}, {generatedTime}. Do not edit.");
 			code.AppendLine("using drittich.SimpleQuery;");
 			code.AppendLine();
-			code.AppendLine("namespace SimpleQuery {");
-			code.AppendLine($"public class {tableType.Name} : SimpleQueryEntity");
+			if (_oneLineNamespaceDeclaration)
+			{
+				code.AppendLine($"namespace {_modelNamespace};");
+				code.AppendLine();
+			}
+			else
+			{
+				code.AppendLine($"namespace {_modelNamespace} {{");
+			}
+			code.AppendLine($"public partial class {tableType.Name} : SimpleQueryEntity");
 			code.AppendLine("{");
 
 			foreach (var property in tableType.Properties)
 			{
 				var typeName = property.TypeName;
-				if (property.IsNullable)
+				if (property.IsNullable && !property.IsPrimaryKey)
 				{
 					typeName += "?";
 				}
@@ -100,7 +117,11 @@ namespace drittich.SimpleQuery.CodeGen
 
 					fkCode.AppendLine($@"
     private {fkTableName}? _{fkTableName};
-    public {fkTableName}? {fkTableName} => _{fkTableName} ??= _FetchById<{fkTableName}>({property.Name});");
+	public {fkTableName}? {fkTableName} 
+	{{ 
+		get => _{fkTableName} ??= _FetchById<{fkTableName}>({property.Name});
+		set => _{fkTableName} = value;
+	}}");
 				}
 
 				code.AppendLine();
@@ -109,19 +130,34 @@ namespace drittich.SimpleQuery.CodeGen
 			}
 
 			code.AppendLine("}");
-			code.AppendLine("}");
+			if (!_oneLineNamespaceDeclaration)
+			{
+				code.AppendLine("}");
+			}
 
 			return code.ToString();
 		}
 
 		private async Task<List<string>> GetTableNamesAsync(SqliteConnection connection)
 		{
-			var sql = @"
-				SELECT name 
-				FROM sqlite_master 
-				WHERE type='table'
-					and name COLLATE BINARY not in @excludeTables";
-			return (await connection.QueryAsync<string>(sql, new { excludeTables = _excludeTables })).ToList();
+			var parameters = new DynamicParameters();
+			var inClause = new List<string>();
+			int index = 0;
+			foreach (var table in _excludeTables)
+			{
+				var paramName = $"@excludeTable{index}";
+				inClause.Add(paramName);
+				parameters.Add(paramName, table);
+				index++;
+			}
+
+			var sql = $@"
+            SELECT name 
+            FROM sqlite_master 
+            WHERE type='table'
+                AND name COLLATE BINARY NOT IN ({string.Join(", ", inClause)})";
+
+			return (await connection.QueryAsync<string>(sql, parameters)).ToList();
 		}
 
 		private async Task<TableType> GetTableTypeAsync(SqliteConnection connection, string tableName)
@@ -168,6 +204,7 @@ namespace drittich.SimpleQuery.CodeGen
 				"real" => "double",
 				"text" => "string",
 				"blob" => "byte[]",
+				"datetime" => "DateTime",
 				_ => throw new NotSupportedException($"The column type '{columnType}' is not supported"),
 			};
 		}

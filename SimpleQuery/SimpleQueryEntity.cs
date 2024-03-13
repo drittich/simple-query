@@ -25,7 +25,9 @@ namespace drittich.SimpleQuery
 		/// <returns>The fetch mode for child references.</returns>
 		internal ReferenceFetchMode GetChildrenReferenceFetchMode()
 		{
-			return _fetchReferencesType == ReferenceFetchMode.SingleLevel ? ReferenceFetchMode.None : _fetchReferencesType;
+			return _fetchReferencesType == ReferenceFetchMode.SingleLevel || _fetchReferencesType == ReferenceFetchMode.SingleLevelByName
+				? ReferenceFetchMode.None
+				: _fetchReferencesType;
 		}
 
 		/// <summary>
@@ -37,7 +39,9 @@ namespace drittich.SimpleQuery
 		{
 			return _fetchReferencesType == ReferenceFetchMode.SingleLevel
 				|| _fetchReferencesType == ReferenceFetchMode.Recursive
-				|| (_fetchReferencesType == ReferenceFetchMode.ByName && _entitiesToFetch != null && _entitiesToFetch.Contains(entityName));
+				|| (_fetchReferencesType == ReferenceFetchMode.ByName && _entitiesToFetch != null && _entitiesToFetch.Contains(entityName))
+				|| (_fetchReferencesType == ReferenceFetchMode.SingleLevelByName && _entitiesToFetch != null && _entitiesToFetch.Contains(entityName))
+				|| (_fetchReferencesType == ReferenceFetchMode.RecursiveByName && _entitiesToFetch != null && _entitiesToFetch.Contains(entityName));
 		}
 
 		/// <summary>
@@ -50,7 +54,7 @@ namespace drittich.SimpleQuery
 		{
 			if (id != null && GetFetchReferences(typeof(T).Name))
 			{
-				return _dbContext!.GetFirstAsync<T>(id, GetChildrenReferenceFetchMode()).Result;
+				return _dbContext!.QueryFirstAsync<T>(id, GetChildrenReferenceFetchMode()).Result;
 			}
 
 			return null;
