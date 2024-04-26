@@ -54,7 +54,7 @@ namespace drittich.SimpleQuery
 		{
 			if (id != null && GetFetchReferences(typeof(T).Name))
 			{
-				return _dbContext!.QueryFirstAsync<T>(id, GetChildrenReferenceFetchMode()).Result;
+				return _dbContext!.QueryFirstAsync<T>(id, GetChildrenReferenceFetchMode(), (string?)null).Result;
 			}
 
 			return null;

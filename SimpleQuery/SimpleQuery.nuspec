@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.2.1</version>
+    <version>1.3.2</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,15 +10,15 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/drittich/simple-query</projectUrl>
     <description>A code-generated model for SQLite</description>
-    <releaseNotes>Use FKs to generate lazy getters</releaseNotes>
+    <releaseNotes>Add additional overloads for convenience</releaseNotes>
     <copyright>2024 D'Arcy Rittich</copyright>
     <tags>sqlite model</tags>
 	<readme>README.md</readme>
 	<repository type="git" url="https://github.com/drittich/simple-query"/>
 	<dependencies>
       <group targetFramework=".NETStandard2.1">
-        <dependency id="Dapper" version="2.1.28" />
-        <dependency id="Microsoft.Data.Sqlite" version="8.0.2" />
+        <dependency id="Dapper" version="2.1.0" />
+        <dependency id="Microsoft.Data.Sqlite" version="8.0.0" />
       </group>
     </dependencies>
   </metadata>
