@@ -14,7 +14,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>sqlite,model</PackageTags>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
-    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <AssemblyVersion>1.2.1</AssemblyVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
