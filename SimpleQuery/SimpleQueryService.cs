@@ -102,7 +102,7 @@ namespace drittich.SimpleQuery
 
 		public async Task<List<T>> QueryAsync<T>(IEnumerable<object>? ids, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity
 		{
-			return await QueryAsync<T>(null, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
+			return await QueryAsync<T>(ids, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
 		public async Task<List<T>> QueryAsync<T>(IEnumerable<object>? ids, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity
@@ -219,17 +219,6 @@ namespace drittich.SimpleQuery
 			return results;
 		}
 
-
-
-
-
-
-
-
-
-
-
-
 		public async Task<T> QueryFirstByColumnValuesAsync<T>(Dictionary<string, object> columnValues) where T : SimpleQueryEntity
 		{
 			return await QueryFirstByColumnValuesAsync<T>(columnValues, ReferenceFetchMode.None);
@@ -250,12 +239,6 @@ namespace drittich.SimpleQuery
 			return (await QueryByColumnValuesAsync<T>(columnValues, referenceFetchMode, entityTypesToFetch)).First();
 		}
 
-
-
-
-
-
-
 		public async Task<T?> QueryFirstOrDefaultByColumnValuesAsync<T>(Dictionary<string, object> columnValues) where T : SimpleQueryEntity
 		{
 			return await QueryFirstOrDefaultByColumnValuesAsync<T>(columnValues, ReferenceFetchMode.None);
@@ -273,12 +256,6 @@ namespace drittich.SimpleQuery
 		{
 			return (await QueryByColumnValuesAsync<T>(columnValues, referenceFetchMode, entityTypesToFetch)).FirstOrDefault();
 		}
-
-
-
-
-
-
 
 		public async Task<List<T>> QueryByColumnValuesAsync<T>(Dictionary<string, object> columnValues) where T : SimpleQueryEntity
 		{
@@ -341,16 +318,6 @@ namespace drittich.SimpleQuery
 			return (await QueryByWhereClauseAsync<T>(whereClause, parameters, referenceFetchMode, entityTypesToFetch)).First();
 		}
 
-
-
-
-
-
-
-
-
-
-
 		public async Task<T?> QueryFirstOrDefaultByWhereClauseAsync<T>(string whereClause) where T : SimpleQueryEntity
 		{
 			return await QueryFirstOrDefaultByWhereClauseAsync<T>(whereClause, null);
@@ -375,19 +342,6 @@ namespace drittich.SimpleQuery
 		{
 			return (await QueryByWhereClauseAsync<T>(whereClause, parameters, referenceFetchMode, entityTypesToFetch)).FirstOrDefault();
 		}
-
-
-
-
-
-
-
-		//CONTINUE HERE
-
-
-
-
-
 
 		public async Task<List<T>> QueryByWhereClauseAsync<T>(string whereClause) where T : SimpleQueryEntity
 		{
@@ -415,7 +369,7 @@ namespace drittich.SimpleQuery
 
 		public async Task<List<T>> QueryByWhereClauseAsync<T>(string whereClause, object? parameters, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity
 		{
-			return await QueryByWhereClauseAsync<T>(whereClause, null, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
+			return await QueryByWhereClauseAsync<T>(whereClause, parameters, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
 		public async Task<List<T>> QueryByWhereClauseAsync<T>(string whereClause, object? parameters, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch = null) where T : SimpleQueryEntity
@@ -437,8 +391,6 @@ namespace drittich.SimpleQuery
 
 			return results;
 		}
-
-
 
 		public async Task<T> QueryFirstByQueryAsync<T>(string query) where T : SimpleQueryEntity
 		{
@@ -465,17 +417,6 @@ namespace drittich.SimpleQuery
 		{
 			return (await QueryBySqlAsync<T>(query, parameters, referenceFetchMode, entityTypesToFetch)).First();
 		}
-
-
-
-
-
-
-
-
-
-
-
 
 		public async Task<T?> QueryFirstOrDefaultByQueryAsync<T>(string query) where T : SimpleQueryEntity
 		{
@@ -511,16 +452,6 @@ namespace drittich.SimpleQuery
 		{
 			return (await QueryBySqlAsync<T>(query, parameters, referenceFetchMode, entityTypesToFetch)).FirstOrDefault();
 		}
-
-
-
-
-
-
-
-
-
-
 
 		public async Task<List<T>> QueryBySqlAsync<T>(string query)
 		{
@@ -574,10 +505,6 @@ namespace drittich.SimpleQuery
 			return results;
 		}
 
-
-
-
-
 		public async Task<T> QueryFirstBySqlAsync<T>(string query)
 		{
 			return await QueryFirstBySqlAsync<T>(query, null);
@@ -625,10 +552,6 @@ namespace drittich.SimpleQuery
 
 			return result;
 		}
-
-
-
-
 
 		public async Task<T> QueryFirstOrDefaultBySqlAsync<T>(string query)
 		{
@@ -678,7 +601,6 @@ namespace drittich.SimpleQuery
 			// Assuming default(T) is acceptable for your use case when there's no result.
 			return result;
 		}
-
 
 		/// <summary>
 		/// Executes a SQL query asynchronously.
