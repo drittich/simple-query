@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>drittich.SimpleQuery</id>
-    <version>1.3.5</version>
+    <version>1.3.10</version>
     <title>drittich.SimpleQuery</title>
     <authors>D'Arcy Rittich</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -10,7 +10,7 @@
     <!-- <icon>icon.png</icon> -->
     <projectUrl>https://github.com/drittich/simple-query</projectUrl>
     <description>A code-generated model for SQLite</description>
-    <releaseNotes>Bug fix</releaseNotes>
+    <releaseNotes>Improve primary key detection</releaseNotes>
     <copyright>2024 D'Arcy Rittich</copyright>
     <tags>sqlite model</tags>
 	<readme>README.md</readme>

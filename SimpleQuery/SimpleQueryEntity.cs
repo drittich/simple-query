@@ -46,11 +46,12 @@ namespace drittich.SimpleQuery
 
 		/// <summary>
 		/// Fetches an entity of type T by its id.
+		/// Used to fetch entities with references.
 		/// </summary>
 		/// <param name="id">The id of the entity to fetch.</param>
 		/// <typeparam name="T">The type of the entity to fetch. Must be a subclass of SimpleQueryEntity.</typeparam>
 		/// <returns>The fetched entity if it exists and references should be fetched for its type, null otherwise.</returns>
-		public T? _FetchById<T>(object? id) where T : SimpleQueryEntity
+		public T? _FetchById<T>(object? id) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			if (id != null && GetFetchReferences(typeof(T).Name))
 			{

@@ -13,8 +13,8 @@
     <RepositoryUrl>https://github.com/drittich/simple-query</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>sqlite,model</PackageTags>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
-    <AssemblyVersion>1.3.5</AssemblyVersion>
+    <PackageReleaseNotes>Improve primary key detection</PackageReleaseNotes>
+    <AssemblyVersion>1.3.10</AssemblyVersion>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
@@ -29,7 +29,9 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
   </ItemGroup>
 

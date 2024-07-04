@@ -3,9 +3,9 @@
 namespace drittich.SimpleQuery
 {
 	/// <summary>
-	/// Represents a table in the database.
+	/// Represents the schema of a table in the database.
 	/// </summary>
-	public class TableType
+	public class TableSchema
 	{
 		/// <summary>
 		/// Gets or sets the name of the table.
@@ -13,8 +13,8 @@ namespace drittich.SimpleQuery
 		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Gets or sets the properties of the table.
+		/// Gets or sets the column schema of the table.
 		/// </summary>
-		public List<PropertyType> Properties { get; set; } = new List<PropertyType>();
+		public List<ColumnSchema> Properties { get; set; } = new List<ColumnSchema>();
 	}
 }

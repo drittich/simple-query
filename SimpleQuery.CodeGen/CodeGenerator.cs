@@ -46,6 +46,7 @@ namespace drittich.SimpleQuery.CodeGen
 		/// <returns>A Task representing the asynchronous operation.</returns>
 		public async Task GenerateCodeAsync()
 		{
+			var generatedTime = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
 			Directory.CreateDirectory(_modelFolder);
 
 			using var connection = new SqliteConnection(_connectionString);
@@ -55,8 +56,8 @@ namespace drittich.SimpleQuery.CodeGen
 
 			foreach (var tableName in tableNames)
 			{
-				var tableType = await GetTableTypeAsync(connection, tableName);
-				var code = GenerateCode(tableNames, tableType);
+				var tableType = await GetTableSchemaAsync(connection, tableName);
+				var code = GenerateCode(tableNames, tableType, generatedTime);
 				var filePath = Path.Combine(_modelFolder, $"{tableName}.cs");
 				await File.WriteAllTextAsync(filePath, code);
 			}
@@ -68,14 +69,14 @@ namespace drittich.SimpleQuery.CodeGen
 		/// <param name="tableNames">A list of all table names in the database.</param>
 		/// <param name="tableType">The type information of the table for which the code is to be generated.</param>
 		/// <returns>A string containing the generated C# code.</returns>
-		private string GenerateCode(List<string> tableNames, TableType tableType)
+		private string GenerateCode(List<string> tableNames, TableSchema tableType, string generatedTime)
 		{
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			var version = assembly.GetName().Version!;
-			var generatedTime = DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
 
 			var code = new StringBuilder();
 			code.AppendLine($"// This code was generated with SimpleQuery v{version.Major}.{version.Minor}.{version.Build}, {generatedTime}. Do not edit.");
+			code.AppendLine("// https://github.com/drittich/simple-query");
 			code.AppendLine("using drittich.SimpleQuery;");
 			code.AppendLine();
 			if (_oneLineNamespaceDeclaration)
@@ -87,8 +88,12 @@ namespace drittich.SimpleQuery.CodeGen
 			{
 				code.AppendLine($"namespace {_modelNamespace} {{");
 			}
-			code.AppendLine($"public partial class {tableType.Name} : SimpleQueryEntity");
+			code.AppendLine($"public partial class {tableType.Name} : SimpleQueryEntity, IPrimaryKeyProvider");
 			code.AppendLine("{");
+
+			// implement the interface IPrimaryKeyProvider
+			var primaryKeys = tableType.Properties.Where(p => p.IsPrimaryKey);
+			code.AppendLine($"\tpublic string[] GetPrimaryKeyColumnNames() => new[] {{ \"{string.Join("\", \"", primaryKeys.Select(p => p.Name))}\" }};");
 
 			foreach (var property in tableType.Properties)
 			{
@@ -159,12 +164,12 @@ namespace drittich.SimpleQuery.CodeGen
 			return (await connection.QueryAsync<string>(sql, parameters)).ToList();
 		}
 
-		private async Task<TableType> GetTableTypeAsync(SqliteConnection connection, string tableName)
+		private async Task<TableSchema> GetTableSchemaAsync(SqliteConnection connection, string tableName)
 		{
-			var tableType = new TableType
+			var tableType = new TableSchema
 			{
 				Name = tableName,
-				Properties = new List<PropertyType>(),
+				Properties = new List<ColumnSchema>(),
 			};
 
 			var query = $"PRAGMA table_info({tableName})";
@@ -177,7 +182,7 @@ namespace drittich.SimpleQuery.CodeGen
 				var isNullable = ((long)row.notnull) == 0;
 				var isPrimaryKey = ((long)row.pk) == 1;
 
-				var propertyType = new PropertyType
+				var propertyType = new ColumnSchema
 				{
 					Name = columnName,
 					TypeName = GetColumnType(columnName, columnType),

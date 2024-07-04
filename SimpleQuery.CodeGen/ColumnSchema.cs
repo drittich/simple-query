@@ -1,27 +1,27 @@
 ﻿namespace drittich.SimpleQuery
 {
 	/// <summary>
-	/// Represents a property type in a query.
+	/// Represents the schema of a column in a database table.
 	/// </summary>
-	public class PropertyType
+	public class ColumnSchema
 	{
 		/// <summary>
-		/// Gets or sets the name of the property.
+		/// Gets or sets the name of the column.
 		/// </summary>
 		public string Name { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Gets or sets the type name of the property.
+		/// Gets or sets the type name of the column.
 		/// </summary>
 		public string TypeName { get; set; } = string.Empty;
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the property is nullable.
+		/// Gets or sets a value indicating whether the column is nullable.
 		/// </summary>
 		public bool IsNullable { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the property is a primary key.
+		/// Gets or sets a value indicating whether the column is a primary key.
 		/// </summary>
 		public bool IsPrimaryKey { get; set; }
 	}
