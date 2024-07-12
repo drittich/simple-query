@@ -57,7 +57,7 @@ namespace drittich.SimpleQuery.CodeGen
 			foreach (var tableName in tableNames)
 			{
 				var tableType = await GetTableSchemaAsync(connection, tableName);
-				var code = GenerateCode(tableNames, tableType, generatedTime);
+				var code = GenerateCode(tableType, generatedTime);
 				var filePath = Path.Combine(_modelFolder, $"{tableName}.cs");
 				await File.WriteAllTextAsync(filePath, code);
 			}
@@ -69,14 +69,16 @@ namespace drittich.SimpleQuery.CodeGen
 		/// <param name="tableNames">A list of all table names in the database.</param>
 		/// <param name="tableType">The type information of the table for which the code is to be generated.</param>
 		/// <returns>A string containing the generated C# code.</returns>
-		private string GenerateCode(List<string> tableNames, TableSchema tableType, string generatedTime)
+		private string GenerateCode(TableSchema tableType, string generatedTime)
 		{
 			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			var version = assembly.GetName().Version!;
 
 			var code = new StringBuilder();
-			code.AppendLine($"// This code was generated with SimpleQuery v{version.Major}.{version.Minor}.{version.Build}, {generatedTime}. Do not edit.");
-			code.AppendLine("// https://github.com/drittich/simple-query");
+			code.AppendLine("/// <remarks>");
+			code.AppendLine($"/// This code was generated with SimpleQuery v{version.Major}.{version.Minor}.{version.Build}, {generatedTime}. Do not edit.");
+			code.AppendLine("/// For more information, visit https://github.com/drittich/simple-query.");
+			code.AppendLine("/// </remarks>");
 			code.AppendLine("using drittich.SimpleQuery;");
 			code.AppendLine();
 			if (_oneLineNamespaceDeclaration)
@@ -93,6 +95,10 @@ namespace drittich.SimpleQuery.CodeGen
 
 			// implement the interface IPrimaryKeyProvider
 			var primaryKeys = tableType.Properties.Where(p => p.IsPrimaryKey);
+			code.AppendLine("\t/// <summary>");
+			code.AppendLine($"\t/// Gets the primary key column names for the {tableType.Name} entity.");
+			code.AppendLine("\t/// </summary>");
+			code.AppendLine("\t/// <returns>An array containing the primary key column names.</returns>");
 			code.AppendLine($"\tpublic string[] GetPrimaryKeyColumnNames() => new[] {{ \"{string.Join("\", \"", primaryKeys.Select(p => p.Name))}\" }};");
 
 			foreach (var property in tableType.Properties)
@@ -104,6 +110,10 @@ namespace drittich.SimpleQuery.CodeGen
 				}
 
 				var defaultValue = property.TypeName == "string" ? " = string.Empty;" : string.Empty;
+				code.AppendLine();
+				code.AppendLine("\t/// <summary>");
+				code.AppendLine($"\t/// Gets or sets the {property.Name} property for the {tableType.Name} entity.");
+				code.AppendLine("\t/// </summary>");
 				code.AppendLine($"\tpublic {typeName} {property.Name} {{ get; set; }}{defaultValue}");
 			}
 
@@ -120,6 +130,12 @@ namespace drittich.SimpleQuery.CodeGen
 
 					fkCode.AppendLine($@"
     private {key.table}? _{newPropertyName};
+	/// <summary>
+	/// Gets or sets the associated {newPropertyName} object.
+	/// </summary>
+	/// <remarks>
+	/// The {newPropertyName} property fetches the {newPropertyName} object based on the {key.from} if it has not already been retrieved.
+	/// </remarks>
 	public {key.table}? {newPropertyName} 
 	{{ 
 		get => _{newPropertyName} ??= _FetchById<{key.table}>({key.from});

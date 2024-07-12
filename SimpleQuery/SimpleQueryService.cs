@@ -14,7 +14,7 @@ namespace drittich.SimpleQuery
 	/// <summary>
 	/// Provides a simple query service for interacting with a SQLite database.
 	/// </summary>
-	public class SimpleQueryService
+	public class SimpleQueryService : IDisposable
 	{
 		private readonly ILogger<SimpleQueryService> _logger;
 		private readonly LogLevel _logLevel;
@@ -57,12 +57,29 @@ namespace drittich.SimpleQuery
 			_connectionString = connectionString;
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if no entity is found with the specified ID.</exception>
+
 		public async Task<T> QueryFirstAsync<T>(object id) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			var ret = await QueryEntityFirstOrDefaultAsync<T>(id)
 				?? throw new InvalidOperationException($"No entity of type {typeof(T).Name} with id {id} was found.");
 			return ret;
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID and reference fetch mode.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if no entity is found with the specified ID.</exception>
 
 		public async Task<T> QueryFirstAsync<T>(object id, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
@@ -71,12 +88,33 @@ namespace drittich.SimpleQuery
 			return ret;
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID, reference fetch mode, and entity type to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypeToFetch">The type of entity to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if no entity is found with the specified ID.</exception>
+
 		public async Task<T> QueryFirstAsync<T>(object id, ReferenceFetchMode referenceFetchMode, string entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			var ret = await QueryEntityFirstOrDefaultAsync<T>(id, referenceFetchMode, entityTypeToFetch)
 				?? throw new InvalidOperationException($"No entity of type {typeof(T).Name} with id {id} was found.");
 			return ret;
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID, reference fetch mode, and collection of entity types to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+		/// <exception cref="InvalidOperationException">Thrown if no entity is found with the specified ID.</exception>
+
 		public async Task<T> QueryFirstAsync<T>(object id, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			var ret = await QueryEntityFirstOrDefaultAsync<T>(id, referenceFetchMode, entityTypesToFetch)
@@ -84,20 +122,53 @@ namespace drittich.SimpleQuery
 			return ret;
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
+
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(object id) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryEntityFirstOrDefaultAsync<T>(id);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID and reference fetch mode, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
 
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(object id, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryEntityFirstOrDefaultAsync<T>(id, referenceFetchMode);
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID, reference fetch mode, and entity type to fetch, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypeToFetch">The type of entity to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
+
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(object id, ReferenceFetchMode referenceFetchMode, string entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryEntityFirstOrDefaultAsync<T>(id, referenceFetchMode, entityTypeToFetch);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> with the specified ID, reference fetch mode, and collection of entity types to fetch, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="id">The ID of the entity.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
 
 		public async Task<T?> QueryFirstOrDefaultAsync<T>(object id, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
@@ -105,10 +176,23 @@ namespace drittich.SimpleQuery
 		}
 
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
+
 		public async Task<List<T>> QueryAsync<T>() where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryAsync<T>(null);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> with the specified IDs.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="ids">The collection of IDs to filter the query. If null, no filtering is applied.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
 
 		public async Task<List<T>> QueryAsync<T>(IEnumerable<object>? ids) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
@@ -116,10 +200,27 @@ namespace drittich.SimpleQuery
 		}
 
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> with the specified IDs and reference fetch mode.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="ids">The collection of IDs to filter the query. If null, no filtering is applied.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode for the entities.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
+
 		public async Task<List<T>> QueryAsync<T>(IEnumerable<object>? ids, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryAsync<T>(ids, referenceFetchMode, (string?)null);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> with the specified IDs, reference fetch mode, and entity type to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="ids">The collection of IDs to filter the query. If null, no filtering is applied.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode for the entities.</param>
+		/// <param name="entityTypeToFetch">The entity type to fetch.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
 
 		public async Task<List<T>> QueryAsync<T>(IEnumerable<object>? ids, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
@@ -183,61 +284,171 @@ namespace drittich.SimpleQuery
 			return ret;
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+
 		public async Task<T> QueryFirstByColumnValueAsync<T>(string columnName, object columnValue) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return (await QueryFirstByColumnValueAsync<T>(columnName, columnValue, ReferenceFetchMode.None));
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
 
 		public async Task<T> QueryFirstByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryFirstByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, (string?)null);
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode and entity type to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypeToFetch">The type of entity to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
+
 		public async Task<T> QueryFirstByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryFirstByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode and collection of entity types to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/>.</returns>
 
 		public async Task<T> QueryFirstByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return (await QueryByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, entityTypesToFetch)).First();
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
+
 		public async Task<T?> QueryFirstOrDefaultByColumnValueAsync<T>(string columnName, object columnValue) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryFirstOrDefaultByColumnValueAsync<T>(columnName, columnValue, ReferenceFetchMode.None);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
 
 		public async Task<T?> QueryFirstOrDefaultByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryFirstOrDefaultByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, (string?)null);
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode and entity type to fetch, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypeToFetch">The type of entity to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
+
 		public async Task<T?> QueryFirstOrDefaultByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryFirstOrDefaultByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve the first entity of type <typeparamref name="T"/> by column value with the specified reference fetch mode and collection of entity types to fetch, or returns the default value if not found.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The entity of type <typeparamref name="T"/> or the default value if not found.</returns>
 
 		public async Task<T?> QueryFirstOrDefaultByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return (await QueryByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, entityTypesToFetch)).FirstOrDefault();
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> by column value.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
+
 		public async Task<List<T>> QueryByColumnValueAsync<T>(string columnName, object columnValue) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryByColumnValueAsync<T>(columnName, columnValue, ReferenceFetchMode.None);
 		}
+
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> by column value with the specified reference fetch mode.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
 
 		public async Task<List<T>> QueryByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, (string?)null);
 		}
 
+		/// <summary>
+		/// Executes a query asynchronously to retrieve a list of entities of type <typeparamref name="T"/> by column value with the specified reference fetch mode and entity type to fetch.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypeToFetch">The type of entity to fetch.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/>.</returns>
+
 		public async Task<List<T>> QueryByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, string? entityTypeToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			return await QueryByColumnValueAsync<T>(columnName, columnValue, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Queries the database for entities of type <typeparamref name="T"/> based on a specific column value.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities to query.</typeparam>
+		/// <param name="columnName">The name of the column to filter on.</param>
+		/// <param name="columnValue">The value of the column to filter on.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode for fetching related entities.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch along with the main entity.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/> that match the specified column value.</returns>
 		public async Task<List<T>> QueryByColumnValueAsync<T>(string columnName, object columnValue, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			_logger.LogTrace("Executing QueryByColumnValueAsync");
@@ -322,6 +533,14 @@ namespace drittich.SimpleQuery
 			return await QueryByColumnValuesAsync<T>(columnValues, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Queries the database for entities of type <typeparamref name="T"/> based on the provided column values.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities to query.</typeparam>
+		/// <param name="columnValues">A dictionary containing the column names and their corresponding values to filter the query.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode for the queried entities.</param>
+		/// <param name="entityTypesToFetch">A collection of entity types to fetch along with the queried entities.</param>
+		/// <returns>A list of entities of type <typeparamref name="T"/> that match the provided column values.</returns>
 		public async Task<List<T>> QueryByColumnValuesAsync<T>(Dictionary<string, object> columnValues, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			_logger.LogTrace("Executing QueryByColumnValueAsync");
@@ -433,6 +652,15 @@ namespace drittich.SimpleQuery
 			return await QueryByWhereClauseAsync<T>(whereClause, parameters, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Executes a query by a WHERE clause asynchronously.
+		/// </summary>
+		/// <typeparam name="T">The type of the entity.</typeparam>
+		/// <param name="whereClause">The WHERE clause of the query.</param>
+		/// <param name="parameters">The parameters for the query.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>A list of entities that match the WHERE clause.</returns>
 		public async Task<List<T>> QueryByWhereClauseAsync<T>(string whereClause, object? parameters, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch = null) where T : SimpleQueryEntity, IPrimaryKeyProvider, new()
 		{
 			_logger.LogTrace("Executing QueryByWhereClauseAsync");
@@ -554,6 +782,15 @@ namespace drittich.SimpleQuery
 			return await QueryBySqlAsync<T>(query, parameters, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Executes a SQL query asynchronously and returns a list of results.
+		/// </summary>
+		/// <typeparam name="T">The type of the entities to be returned.</typeparam>
+		/// <param name="query">The SQL query to be executed.</param>
+		/// <param name="parameters">The parameters to be used in the query.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode for the entities.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>A list of entities that match the query.</returns>
 		public async Task<List<T>> QueryBySqlAsync<T>(string query, object? parameters, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch)
 		{
 			_logger.LogTrace("Executing QueryBySqlAsync");
@@ -617,6 +854,15 @@ namespace drittich.SimpleQuery
 			return await QueryFirstBySqlAsync<T>(query, parameters, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Executes a SQL query and returns the first result of type <typeparamref name="T"/> asynchronously.
+		/// </summary>
+		/// <typeparam name="T">The type of the result.</typeparam>
+		/// <param name="query">The SQL query to execute.</param>
+		/// <param name="parameters">The parameters to be used in the query.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The first result of type <typeparamref name="T"/>.</returns>
 		public async Task<T> QueryFirstBySqlAsync<T>(string query, object? parameters, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch)
 		{
 			_logger.LogTrace("Executing QueryFirstBySqlAsync");
@@ -676,6 +922,15 @@ namespace drittich.SimpleQuery
 			return await QueryFirstOrDefaultBySqlAsync<T>(query, null, referenceFetchMode, entityTypeToFetch is null ? null : new List<string> { entityTypeToFetch });
 		}
 
+		/// <summary>
+		/// Executes a SQL query and returns the first or default result asynchronously.
+		/// </summary>
+		/// <typeparam name="T">The type of the result.</typeparam>
+		/// <param name="query">The SQL query to execute.</param>
+		/// <param name="parameters">The parameters to be used in the query.</param>
+		/// <param name="referenceFetchMode">The reference fetch mode.</param>
+		/// <param name="entityTypesToFetch">The collection of entity types to fetch.</param>
+		/// <returns>The first or default result of the query.</returns>
 		public async Task<T> QueryFirstOrDefaultBySqlAsync<T>(string query, object? parameters, ReferenceFetchMode referenceFetchMode, ICollection<string>? entityTypesToFetch)
 		{
 			_logger.LogTrace("Executing QueryFirstOrDefaultBySqlAsync");
@@ -776,6 +1031,14 @@ namespace drittich.SimpleQuery
 		{
 			var idList = new List<object> { id };
 			return (await QueryAsync<T>(idList, referenceFetchMode, entityTypesToFetch)).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Disposes the SimpleQueryService instance.
+		/// </summary>
+		public void Dispose()
+		{
+			_logger.LogInformation($"Service SimpleQueryService is being disposed. It ran {QueryCount:N0} quer{(QueryCount == 1 ? "y" : "ies")} in {QueryTotalMs:N0} ms.");
 		}
 	}
 }
