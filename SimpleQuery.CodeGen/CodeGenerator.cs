@@ -196,7 +196,7 @@ namespace drittich.SimpleQuery.CodeGen
 				var columnName = (string)row.name;
 				var columnType = (string)row.type;
 				var isNullable = ((long)row.notnull) == 0;
-				var isPrimaryKey = ((long)row.pk) == 1;
+				var isPrimaryKey = ((long)row.pk) != 0;
 
 				var propertyType = new ColumnSchema
 				{
@@ -216,6 +216,9 @@ namespace drittich.SimpleQuery.CodeGen
 		{
 			if (columnName.EndsWith("Date") || columnName == "Created" || columnName == "Modified")
 				return "DateTime";
+
+			if (columnType.StartsWith("Text ", StringComparison.OrdinalIgnoreCase))
+				columnType = "text";
 
 			return columnType.ToLower() switch
 			{
