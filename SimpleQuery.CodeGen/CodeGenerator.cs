@@ -52,7 +52,7 @@ namespace drittich.SimpleQuery.CodeGen
 			using var connection = new SqliteConnection(_connectionString);
 			await connection.OpenAsync();
 
-			var tableNames = await GetTableNamesAsync(connection);
+			var tableNames = (await GetTableNamesAsync(connection)).OrderBy(t => t);
 
 			foreach (var tableName in tableNames)
 			{
