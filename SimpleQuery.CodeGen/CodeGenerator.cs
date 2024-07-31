@@ -235,7 +235,8 @@ namespace drittich.SimpleQuery.CodeGen
 		private async Task<List<ForeignKey>> GetForeignKeys(string tableName, SqliteConnection connection)
 		{
 			var sql = @$"PRAGMA foreign_key_list('{tableName}');";
-			return (await connection.QueryAsync<ForeignKey>(sql, new { tableName })).ToList();
+			var foreignKeys = (await connection.QueryAsync<ForeignKey>(sql, new { tableName })).ToList();
+			return foreignKeys;
 		}
 	}
 }
