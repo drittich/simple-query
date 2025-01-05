@@ -182,34 +182,41 @@ namespace drittich.SimpleQuery.CodeGen
 
 		private async Task<TableSchema> GetTableSchemaAsync(SqliteConnection connection, string tableName)
 		{
-			var tableType = new TableSchema
+			try
 			{
-				Name = tableName,
-				Properties = new List<ColumnSchema>(),
-			};
-
-			var query = $"PRAGMA table_info({tableName})";
-			var columnInfos = await connection.QueryAsync(query);
-
-			foreach (var row in columnInfos)
-			{
-				var columnName = (string)row.name;
-				var columnType = (string)row.type;
-				var isNullable = ((long)row.notnull) == 0;
-				var isPrimaryKey = ((long)row.pk) != 0;
-
-				var propertyType = new ColumnSchema
+				var tableType = new TableSchema
 				{
-					Name = columnName,
-					TypeName = GetColumnType(columnName, columnType),
-					IsNullable = isNullable,
-					IsPrimaryKey = isPrimaryKey,
+					Name = tableName,
+					Properties = new List<ColumnSchema>(),
 				};
 
-				tableType.Properties.Add(propertyType);
-			}
+				var query = $"PRAGMA table_info({tableName})";
+				var columnInfos = await connection.QueryAsync(query);
 
-			return tableType;
+				foreach (var row in columnInfos)
+				{
+					var columnName = (string)row.name;
+					var columnType = (string)row.type;
+					var isNullable = ((long)row.notnull) == 0;
+					var isPrimaryKey = ((long)row.pk) != 0;
+
+					var propertyType = new ColumnSchema
+					{
+						Name = columnName,
+						TypeName = GetColumnType(columnName, columnType),
+						IsNullable = isNullable,
+						IsPrimaryKey = isPrimaryKey,
+					};
+
+					tableType.Properties.Add(propertyType);
+				}
+
+				return tableType;
+			}
+			catch (Exception ex)
+			{
+				throw new Exception($"Error getting schema for table '{tableName}'", ex);
+			}
 		}
 
 		private string GetColumnType(string columnName, string columnType)
@@ -228,7 +235,7 @@ namespace drittich.SimpleQuery.CodeGen
 				"text" => "string",
 				"blob" => "byte[]",
 				"datetime" => "DateTime",
-				_ => throw new NotSupportedException($"The column type '{columnType}' is not supported"),
+				_ => throw new NotSupportedException($"Error getting type for column '{columnName}'. The type '{columnType}' is not supported"),
 			};
 		}
 
